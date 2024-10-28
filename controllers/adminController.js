@@ -1,23 +1,25 @@
 const express = require("express");
 const Admin = require("../model/adminModel");
+const Customer = require("../model/customerModel");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
-/* Admin registration */
+/* Admin registration */  
 const register = async (req, res) => {
   try {
-    const { username, email, password, role } = req.body;
+    const { user_unique_ID,username, email, password, role } = req.body;
     const adminExist = await Admin.findOne({ email: email });
     if (adminExist) {
       return res.status(400).json({ message: "Admin already exists" });
     }
     const adminCreated = await Admin.create({
+      user_unique_ID:email,
       username,
       email,
       password,
       role,
     });
-    res
+   return res
       .status(201)
       .json({ message: "Admin created successfully", admin: adminCreated });
   } catch (error) {
@@ -28,7 +30,8 @@ const register = async (req, res) => {
 /* Admin login */
 const login = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { user_unique_ID: email, password } = req.body;
+        // console.log('uniqueid',user_unique_ID,password)
     const adminExist = await Admin.findOne({ email }); // Corrected variable name
     if (!adminExist) {
       return res.status(400).json({ message: "Invalid credentials" });
@@ -55,10 +58,39 @@ const login = async (req, res) => {
 const admin = async (req, res) => {
   try {
     const adminData = req.user;
-    // console.log(userData)
-    res.status(200).json({ adminBody: adminData });
+    // console.log(adminData)
+   return res.status(200).json({ adminBody: adminData });
   } catch (error) {
-    console.log(`error form the user route ${error}`);
+    // console.log(`error form the user route ${error}`);
+    res.status(500).json({ message: "Server error", error: error.message });
+
   }
 };
-module.exports = { register, login, admin };
+
+//to send customer data for customer collection filter by admin id
+const customersCollection = async (req, res) => {
+  try {
+    // Ensure req.adminId is defined for debugging
+    if (!req.adminId) {
+      console.error("adminId not provided in request");
+      return res.status(400).json({ message: "adminId is missing" });
+    }
+
+    const allCustomers = await Customer.find({ createdByAdmin: req.adminId });
+    
+    if (!allCustomers || allCustomers.length === 0) {
+      return res.status(404).json({ message: "No customers found" });
+    }
+
+    // console.log("Sending response with customer data", allCustomers);
+    return res.status(200).json(allCustomers);
+
+  } catch (error) {
+    console.error("Error fetching customers:", error);
+    if (!res.headersSent) {  // Check headers
+      return res.status(500).json({ message: "Server error", error: error.message });
+    }
+  }
+};
+
+module.exports = { register, login, admin,customersCollection };
