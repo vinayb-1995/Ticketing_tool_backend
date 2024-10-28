@@ -3,6 +3,10 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 const userAdminSchema = new mongoose.Schema({
+  user_unique_ID: {
+    type: String,
+    required: true,
+  },
   username: {
     type: String,
     required: true,
@@ -18,7 +22,7 @@ const userAdminSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ["user", "admin", "customer"],
+    // enum: ["user", "admin", "customer"],
     default: "admin",
   },
 });
