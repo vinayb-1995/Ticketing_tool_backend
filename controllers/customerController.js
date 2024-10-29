@@ -125,7 +125,7 @@ const customer = async (req, res) => {
   try {
     const customerData = req.user;
     // const adminData=customerData.populate('createdByAdmin')
-    console.log(customerData);
+    // console.log(customerData);
     // console.log(adminData)
     return res.status(200).json({ customerBody: customerData });
   } catch (error) {
