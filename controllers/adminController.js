@@ -67,7 +67,7 @@ const admin = async (req, res) => {
   }
 };
 
-//to send customer data for customer collection filter by admin id
+//to send all customers data for customers collection filter by admin id
 const customersCollection = async (req, res) => {
   try {
     // Ensure req.adminId is defined for debugging
@@ -93,4 +93,29 @@ const customersCollection = async (req, res) => {
   }
 };
 
-module.exports = { register, login, admin,customersCollection };
+//to send all agent data for agents collection filter by admin id
+const agentsCollection = async (req, res) => {
+  try {
+    // Ensure req.adminId is defined for debugging
+    if (!req.adminId) {
+      console.error("adminId not provided in request");
+      return res.status(400).json({ message: "adminId is missing" });
+    }
+
+    const allAgents = await Customer.find({ createdByAdmin: req.adminId });
+    
+    if (!allAgents || allAgents.length === 0) {
+      return res.status(404).json({ message: "No Agents found" });
+    }
+
+    // console.log("Sending response with agents data", allAgents);
+    return res.status(200).json(allAgents);
+
+  } catch (error) {
+    console.error("Error fetching Agents:", error);
+    if (!res.headersSent) {  // Check headers
+      return res.status(500).json({ message: "Server error", error: error.message });
+    }
+  }
+};
+module.exports = { register, login, admin,customersCollection,agentsCollection };

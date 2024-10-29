@@ -20,6 +20,9 @@ const adminRouter = require("./Router/adminRouter");
 
 // Require customer router
 const customerRouter = require("./Router/customerRouter");
+
+// Require customer router
+const agentRouter = require("./Router/agentRouter");
 /* -----------------------------------router required------------------ */
 
 // Middleware to parse JSON
@@ -31,6 +34,9 @@ app.use("/api/admin", adminRouter);
 
 // Use the customer router
 app.use("/api/customer", customerRouter);
+
+// Use the customer router
+app.use("/api/agent", agentRouter);
 /*-----------------------------------routere apis----------------------*/
 
 // Define port

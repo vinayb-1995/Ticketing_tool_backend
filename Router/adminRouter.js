@@ -17,4 +17,6 @@ router.route("/admindata").get(authMiddleware, adminController.admin);
 //get customer data
 router.route("/allcustomersdata").get(authMiddleware, adminController.customersCollection);
 
+router.route("/allagentsdata").get(authMiddleware, adminController.agentsCollection);
+
 module.exports = router;
