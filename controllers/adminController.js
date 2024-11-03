@@ -63,7 +63,6 @@ const admin = async (req, res) => {
   } catch (error) {
     // console.log(`error form the user route ${error}`);
     res.status(500).json({ message: "Server error", error: error.message });
-
   }
 };
 
@@ -75,16 +74,12 @@ const customersCollection = async (req, res) => {
       console.error("adminId not provided in request");
       return res.status(400).json({ message: "adminId is missing" });
     }
-
     const allCustomers = await Customer.find({ createdByAdmin: req.adminId });
-    
     if (!allCustomers || allCustomers.length === 0) {
       return res.status(404).json({ message: "No customers found" });
     }
-
     // console.log("Sending response with customer data", allCustomers);
     return res.status(200).json(allCustomers);
-
   } catch (error) {
     console.error("Error fetching customers:", error);
     if (!res.headersSent) {  // Check headers
@@ -101,16 +96,12 @@ const agentsCollection = async (req, res) => {
       console.error("adminId not provided in request");
       return res.status(400).json({ message: "adminId is missing" });
     }
-
     const allAgents = await Customer.find({ createdByAdmin: req.adminId });
-    
     if (!allAgents || allAgents.length === 0) {
       return res.status(404).json({ message: "No Agents found" });
     }
-
     // console.log("Sending response with agents data", allAgents);
     return res.status(200).json(allAgents);
-
   } catch (error) {
     console.error("Error fetching Agents:", error);
     if (!res.headersSent) {  // Check headers
