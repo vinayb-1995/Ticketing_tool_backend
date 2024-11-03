@@ -45,7 +45,7 @@ const PORT = 5000;
 // Connect to the database and start the server
 connectDb()
   .then(() => {
-    app.listen(PORT, () => {
+    app.listen(PORT,"0.0.0.0", () => {
       console.log(`Server started successfully on port ${PORT}`); // Fixed typo
     });
   })
