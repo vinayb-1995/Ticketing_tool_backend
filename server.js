@@ -2,6 +2,7 @@ require("dotenv").config();
 const cors = require("cors");
 const express = require("express");
 const app = express(); // Fixed declaration
+const { v4: uuidv4 } = require('uuid'); // Import uuid
 
 /* CORS setup to handle requests from frontend (running on port 3000) to backend (running on port 6000) */
 const corsOptions = {
@@ -14,6 +15,14 @@ app.use(cors(corsOptions));
 // Require mongoose connection
 const connectDb = require("./utils/db");
 
+/* -----------------------------------generate unique id for tickets ------------------ */
+app.get('/generate-uuid', (req, res) => {
+  let uniqueId = uuidv4(); // Generate a UUID
+  uniqueId = uniqueId.replace(/-/g, ''); // Remove dashes from UUID
+  uniqueId = uniqueId.substring(0, 20);
+  res.json({ uuid: uniqueId }); // Send UUID as response
+});
+/* -----------------------------------generate unique id for tickets ------------------ */
 /* -----------------------------------router required------------------ */
 // Require admin router
 const adminRouter = require("./Router/adminRouter");
@@ -23,6 +32,9 @@ const customerRouter = require("./Router/customerRouter");
 
 // Require customer router
 const agentRouter = require("./Router/agentRouter");
+
+// Require ticket router
+const ticketRouter = require("./Router/ticketRoutes");
 /* -----------------------------------router required------------------ */
 
 // Middleware to parse JSON
@@ -37,6 +49,9 @@ app.use("/api/customer", customerRouter);
 
 // Use the customer router
 app.use("/api/agent", agentRouter);
+
+// Use the ticket router
+app.use("/api/tickets", ticketRouter);
 /*-----------------------------------routere apis----------------------*/
 
 // Define port

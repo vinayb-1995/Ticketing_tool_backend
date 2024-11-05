@@ -1,6 +1,7 @@
 const express = require("express");
 const Admin = require("../model/adminModel");
 const Customer = require("../model/customerModel");
+const Tickets = require("../model/ticketModel");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
@@ -109,4 +110,44 @@ const agentsCollection = async (req, res) => {
     }
   }
 };
-module.exports = { register, login, admin,customersCollection,agentsCollection };
+
+// Get all tickets
+const getAllTickets = async (req, res) => {
+  try {
+    // Ensure adminId is provided, possibly from the authenticated request
+    const adminId = req.adminId || req.user?.adminId; // Use req.user if using JWT or middleware
+    if (!adminId) {
+      console.error("adminId not provided in request");
+      return res.status(400).json({ message: "adminId is missing" });
+    }
+
+    // Fetch tickets associated with the adminId
+    const tickets = await Tickets.find({ adminId }).populate('adminAssigned.assignedTo');
+
+    // Check if tickets were found
+    if (!tickets || tickets.length === 0) {
+      return res.status(404).json({ message: "No tickets found for this admin" });
+    }
+
+    // Return the tickets in the response
+    res.status(200).json(tickets);
+  } catch (err) {
+    // Log and respond with a 500 status code for server errors
+    console.error("Error fetching tickets:", err.message);
+    res.status(500).json({ error: "Server error occurred while fetching tickets" });
+  }
+};
+
+
+
+ // Get a specific ticket by ID
+ const getTicketById = async (req, res) => {
+  try {
+      const ticket = await Tickets.findById(req.params.id).populate('adminAssigned.assignedTo'); // Populating the assigned agent details
+      if (!ticket) return res.status(404).json({ message: 'Ticket not found' });
+      res.status(200).json(ticket);
+  } catch (err) {
+      res.status(500).json({ error: err.message });
+  }
+};
+module.exports = { register, login, admin,customersCollection,agentsCollection, getAllTickets};
