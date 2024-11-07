@@ -4,23 +4,24 @@ const Customer = require("../model/customerModel");
 const Tickets = require("../model/ticketModel");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const { ObjectId } = require("mongoose").Types; // Import ObjectId from mongoose
 
-/* Admin registration */  
+/* Admin registration */
 const register = async (req, res) => {
   try {
-    const { user_unique_ID,username, email, password, role } = req.body;
+    const { user_unique_ID, username, email, password, role } = req.body;
     const adminExist = await Admin.findOne({ email: email });
     if (adminExist) {
       return res.status(400).json({ message: "Admin already exists" });
     }
     const adminCreated = await Admin.create({
-      user_unique_ID:email,
+      user_unique_ID: email,
       username,
       email,
       password,
       role,
     });
-   return res
+    return res
       .status(201)
       .json({ message: "Admin created successfully", admin: adminCreated });
   } catch (error) {
@@ -32,7 +33,7 @@ const register = async (req, res) => {
 const login = async (req, res) => {
   try {
     const { user_unique_ID: email, password } = req.body;
-        // console.log('uniqueid',user_unique_ID,password)
+    // console.log('uniqueid',user_unique_ID,password)
     const adminExist = await Admin.findOne({ email }); // Corrected variable name
     if (!adminExist) {
       return res.status(400).json({ message: "Invalid credentials" });
@@ -60,7 +61,7 @@ const admin = async (req, res) => {
   try {
     const adminData = req.user;
     // console.log(adminData)
-   return res.status(200).json({ adminBody: adminData });
+    return res.status(200).json({ adminBody: adminData });
   } catch (error) {
     // console.log(`error form the user route ${error}`);
     res.status(500).json({ message: "Server error", error: error.message });
@@ -83,8 +84,11 @@ const customersCollection = async (req, res) => {
     return res.status(200).json(allCustomers);
   } catch (error) {
     console.error("Error fetching customers:", error);
-    if (!res.headersSent) {  // Check headers
-      return res.status(500).json({ message: "Server error", error: error.message });
+    if (!res.headersSent) {
+      // Check headers
+      return res
+        .status(500)
+        .json({ message: "Server error", error: error.message });
     }
   }
 };
@@ -105,8 +109,11 @@ const agentsCollection = async (req, res) => {
     return res.status(200).json(allAgents);
   } catch (error) {
     console.error("Error fetching Agents:", error);
-    if (!res.headersSent) {  // Check headers
-      return res.status(500).json({ message: "Server error", error: error.message });
+    if (!res.headersSent) {
+      // Check headers
+      return res
+        .status(500)
+        .json({ message: "Server error", error: error.message });
     }
   }
 };
@@ -122,11 +129,15 @@ const getAllTickets = async (req, res) => {
     }
 
     // Fetch tickets associated with the adminId
-    const tickets = await Tickets.find({ adminId }).populate('adminAssigned.assignedTo');
+    const tickets = await Tickets.find({ adminId }).populate(
+      "adminAssigned.assignedTo"
+    );
 
     // Check if tickets were found
     if (!tickets || tickets.length === 0) {
-      return res.status(404).json({ message: "No tickets found for this admin" });
+      return res
+        .status(404)
+        .json({ message: "No tickets found for this admin" });
     }
 
     // Return the tickets in the response
@@ -134,20 +145,63 @@ const getAllTickets = async (req, res) => {
   } catch (err) {
     // Log and respond with a 500 status code for server errors
     console.error("Error fetching tickets:", err.message);
-    res.status(500).json({ error: "Server error occurred while fetching tickets" });
+    res
+      .status(500)
+      .json({ error: "Server error occurred while fetching tickets" });
   }
 };
 
-
-
- // Get a specific ticket by ID
- const getTicketById = async (req, res) => {
+//get ticketByID
+const getTicketById = async (req, res) => {
   try {
-      const ticket = await Tickets.findById(req.params.id).populate('adminAssigned.assignedTo'); // Populating the assigned agent details
-      if (!ticket) return res.status(404).json({ message: 'Ticket not found' });
-      res.status(200).json(ticket);
+    const adminId = req.adminId || req.user?.adminId;
+    const adminMailID = req.email || req.user?.email;
+    // console.log("adminMailID>>", adminMailID);
+    if (!adminId) {
+      console.error("adminId not provided in request");
+      return res.status(400).json({ message: "adminId is missing" });
+    }
+
+    // console.log("adminId>>", adminId);
+    // console.log("Request Params:", req.params);
+
+    if (!req.params.id) {
+      return res.status(400).json({ message: "uniqueticketID is missing" });
+    }
+
+    const ticket = await Tickets.findOne({
+      adminMailID,
+      uniqueticketID: req.params.id,
+    }).populate("adminAssigned.assignedTo");
+
+    if (!ticket) {
+      return res.status(404).json({ message: "Ticket not found" });
+    }
+
+    // console.log("ticket.adminId>>", ticket.adminId.toString());
+    // Convert adminId to ObjectId for comparison
+    const adminObjectId = new ObjectId(adminId); // Create a new ObjectId
+    // console.log("adminObjectId >>",adminObjectId.toString())
+    // Ensure the admin has access to the ticket
+    if (ticket.adminId.toString() !== adminObjectId.toString()) {
+      return res
+        .status(403)
+        .json({ message: "You do not have permission to view this ticket" });
+    }
+    // console.log("Ticket found:", ticket);
+    res.status(200).json(ticket);
   } catch (err) {
-      res.status(500).json({ error: err.message });
+    console.error(err);
+    res.status(500).json({ error: err.message });
   }
 };
-module.exports = { register, login, admin,customersCollection,agentsCollection, getAllTickets};
+
+module.exports = {
+  register,
+  login,
+  admin,
+  customersCollection,
+  agentsCollection,
+  getAllTickets,
+  getTicketById,
+};

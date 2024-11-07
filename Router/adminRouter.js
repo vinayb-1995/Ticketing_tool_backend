@@ -11,7 +11,6 @@ const authMiddleware = require("../authMiddleware/authMiddleware");
 router.route("/adminregister").post(adminController.register);
 router.route("/adminlogin").post(adminController.login);
 
-router.route("/allTickets").get(authMiddleware, adminController.getAllTickets);
 
 //get admin data
 router.route("/admindata").get(authMiddleware, adminController.admin);
@@ -21,5 +20,11 @@ router.route("/allcustomersdata").get(authMiddleware, adminController.customersC
 
 router.route("/allagentsdata").get(authMiddleware, adminController.agentsCollection);
 
+//get all tickets
+router.route("/allTickets").get(authMiddleware, adminController.getAllTickets);
+
+//get new tickets
+router.route("/allTickets").get(authMiddleware, adminController.getAllTickets);
+router.route("/tickets/:id").get(authMiddleware, adminController.getTicketById);
 
 module.exports = router;

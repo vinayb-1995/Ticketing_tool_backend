@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const ticketSchema = new mongoose.Schema({
-    uniqueticketID: { type: String, required: true, unique: true }, 
+    uniqueticketID: { type: String, required: true }, 
     adminName: { type: String, required: true },
     adminId: { type: String, required: true },
     adminMailID: { type: String, required: true },
@@ -53,8 +53,12 @@ const ticketSchema = new mongoose.Schema({
         endDateAndTime: { type: Date },
         ReviewSolution: { type: String },
     }
-
 }, { timestamps: true });
+
+// Create a unique compound index on (adminmailID, ticketID)
+// ticketSchema.index({ adminmailID: 1, uniqueticketID: 1 }, { unique: true });
+ticketSchema.index({ adminMailID: 1, uniqueticketID: 1 }, { unique: true });
+                                        
 
 // Pre-save hook to update 'agentUpdatedDateandtime' field whenever agent updates the ticket
 // ticketSchema.pre('save', function(next) {
