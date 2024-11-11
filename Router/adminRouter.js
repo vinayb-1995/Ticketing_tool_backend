@@ -19,6 +19,7 @@ router.route("/admindata").get(authMiddleware, adminController.admin);
 router.route("/allcustomersdata").get(authMiddleware, adminController.customersCollection);
 
 router.route("/allagentsdata").get(authMiddleware, adminController.agentsCollection);
+router.route("/agent/:id").get(authMiddleware, adminController.agentByID);
 
 //get all tickets
 router.route("/allTickets").get(authMiddleware, adminController.getAllTickets);

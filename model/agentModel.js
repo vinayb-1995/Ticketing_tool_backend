@@ -29,7 +29,6 @@ const agentSchema = new mongoose.Schema({
   email: {
     type: String,
     required: true,
-    unique: true,
     lowercase: true,
   },
   fullname: {
@@ -47,6 +46,14 @@ const agentSchema = new mongoose.Schema({
   role: {
     type: String,
     default: "agent",
+  },
+  agentAdminIT: {
+    type: Boolean,
+    default: false,
+  },
+  agentAdminSAP: {
+    type: Boolean,
+    default: false,
   },
   adminDetails: {
     // Add this field to the schema
