@@ -17,6 +17,8 @@ const register = async (req, res) => {
       password,
       phoneNumber,
       fullname,
+      agentAdminIT,
+      agentAdminSAP,
     } = req.body;
 
     // console.log('Registering customer:', { firstname, lastname, email, createdByAdmin });
@@ -52,6 +54,8 @@ const register = async (req, res) => {
         username: admin.username,
         email: admin.email,
       },
+      agentAdminIT,
+      agentAdminSAP
     });
     // console.log("new customeer",newCustomer)
     return res.status(201).json({
@@ -109,7 +113,7 @@ const login = async (req, res) => {
     }
   };
 
-  //to send customer data - customer Login:
+  //to send agent data - agent Login:
 const agent = async (req, res) => {
     try {
       const agentData = req.user;

@@ -1,6 +1,7 @@
 const express = require("express");
 const Admin = require("../model/adminModel");
 const Customer = require("../model/customerModel");
+const Agents = require("../model/agentModel");
 const Tickets = require("../model/ticketModel");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
@@ -101,7 +102,8 @@ const agentsCollection = async (req, res) => {
       console.error("adminId not provided in request");
       return res.status(400).json({ message: "adminId is missing" });
     }
-    const allAgents = await Customer.find({ createdByAdmin: req.adminId });
+    const allAgents = await Agents.find({ createdByAdmin: req.adminId });
+    // console.log("llagents>>",allAgents)
     if (!allAgents || allAgents.length === 0) {
       return res.status(404).json({ message: "No Agents found" });
     }
@@ -118,6 +120,34 @@ const agentsCollection = async (req, res) => {
   }
 };
 
+// to get agent by ID:
+const agentByID = async (req, res) => {
+  try {
+    // Ensure req.adminId is defined for debugging
+    if (!req.adminId) {
+      console.error("adminId not provided in request");
+      return res.status(400).json({ message: "adminId is missing" });
+    }
+    const { id } = req.params; // Destructure `id` from `req.params`
+    if (!id) {
+      console.error("Agent ID not provided");
+      return res.status(404).json({ message: "Agent not found" });
+    }
+    const agent = await Agents.findOne({ user_unique_ID: id, createdByAdmin: req.adminId });
+    if (!agent) {
+      console.error("Agent not found");
+      return res.status(404).json({ message: "Agent not found" });
+    }
+    // console.log("Agent by ID:", agent);
+    return res.status(200).json(agent);
+  } catch (error) {
+    console.error("Error fetching Agent:", error);
+    if (!res.headersSent) {
+      return res.status(500).json({ message: "Server error", error: error.message });
+    }
+  }
+};
+
 // Get all tickets
 const getAllTickets = async (req, res) => {
   try {
@@ -127,19 +157,16 @@ const getAllTickets = async (req, res) => {
       console.error("adminId not provided in request");
       return res.status(400).json({ message: "adminId is missing" });
     }
-
     // Fetch tickets associated with the adminId
     const tickets = await Tickets.find({ adminId }).populate(
       "adminAssigned.assignedTo"
     );
-
     // Check if tickets were found
     if (!tickets || tickets.length === 0) {
       return res
         .status(404)
         .json({ message: "No tickets found for this admin" });
     }
-
     // Return the tickets in the response
     res.status(200).json(tickets);
   } catch (err) {
@@ -161,14 +188,11 @@ const getTicketById = async (req, res) => {
       console.error("adminId not provided in request");
       return res.status(400).json({ message: "adminId is missing" });
     }
-
     // console.log("adminId>>", adminId);
     // console.log("Request Params:", req.params);
-
     if (!req.params.id) {
       return res.status(400).json({ message: "uniqueticketID is missing" });
     }
-
     const ticket = await Tickets.findOne({
       adminMailID,
       uniqueticketID: req.params.id,
@@ -177,7 +201,6 @@ const getTicketById = async (req, res) => {
     if (!ticket) {
       return res.status(404).json({ message: "Ticket not found" });
     }
-
     // console.log("ticket.adminId>>", ticket.adminId.toString());
     // Convert adminId to ObjectId for comparison
     const adminObjectId = new ObjectId(adminId); // Create a new ObjectId
@@ -195,13 +218,13 @@ const getTicketById = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
-
 module.exports = {
   register,
   login,
   admin,
   customersCollection,
   agentsCollection,
+  agentByID,
   getAllTickets,
   getTicketById,
 };
