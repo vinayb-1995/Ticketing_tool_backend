@@ -134,6 +134,7 @@ const agentByID = async (req, res) => {
       return res.status(404).json({ message: "Agent not found" });
     }
     const agent = await Agents.findOne({ user_unique_ID: id, createdByAdmin: req.adminId });
+    // console.log("agent>>",agent)
     if (!agent) {
       console.error("Agent not found");
       return res.status(404).json({ message: "Agent not found" });
@@ -271,7 +272,7 @@ const updateAgentAdminByIdIT = async (req, res) => {
 
     // Retrieve agents with agentAdminIT true created by this admin
     const allAgents = await Agents.find({ createdByAdmin: req.adminId, agentAdminIT: true });
-    console.log("allAgents>>", allAgents);
+    // console.log("allAgents>>", allAgents);
 
     if (!allAgents || allAgents.length === 0) {
       return res.status(404).json({ message: "No Agents found" });
@@ -312,7 +313,7 @@ const updateAgentAdminByIdSap = async (req, res) => {
 
     // Retrieve agents with agentAdminIT true created by this admin
     const allAgents = await Agents.find({ createdByAdmin: req.adminId, agentAdminSAP: true });
-    console.log("allAgents>>", allAgents);
+    // console.log("allAgents>>", allAgents);
 
     if (!allAgents || allAgents.length === 0) {
       return res.status(404).json({ message: "No Agents found" });
@@ -327,7 +328,7 @@ const updateAgentAdminByIdSap = async (req, res) => {
         updatedAgents.push(agent);
       }
     }
-console.log("updatedAgents>>",updatedAgents)
+// console.log("updatedAgents>>",updatedAgents)
     // Return updated agents if any were modified
     if (updatedAgents.length > 0) {
       return res.status(200).json(updatedAgents);
@@ -411,6 +412,8 @@ const getTicketById = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+
 
 module.exports = {
   register,
