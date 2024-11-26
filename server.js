@@ -21,9 +21,8 @@ const connectDb = require("./utils/db");
 
 /* -----------------------------------generate unique id for tickets ------------------ */
 //requier ticketidcounter
-const ticketIDCounter=require("./Router/ticketIDCounterRouter")
-app.use('/api/counter',ticketIDCounter)
-
+const ticketIDCounter = require("./Router/ticketIDCounterRouter");
+app.use("/api/counter", ticketIDCounter);
 
 /* -----------------------------------generate unique id for tickets ------------------ */
 /* -----------------------------------router required------------------ */
@@ -38,10 +37,13 @@ const agentRouter = require("./Router/agentRouter");
 
 // Require ticket router
 const ticketRouter = require("./Router/ticketRoutes");
+
+//Require dropdown routre
+const dropdownRoutes = require("./Router/dropdownRouter");
 /* -----------------------------------router required------------------ */
 
-
 /*-----------------------------------routere apis----------------------*/
+
 // Use the admin router
 app.use("/api/admin", adminRouter);
 
@@ -53,8 +55,10 @@ app.use("/api/agent", agentRouter);
 
 // Use the ticket router
 app.use("/api/tickets", ticketRouter);
-/*-----------------------------------routere apis----------------------*/
 
+//dropdown api
+app.use("/api/dropdown", dropdownRoutes);
+/*-----------------------------------routere apis----------------------*/
 
 // Define port
 const PORT = 5000;
@@ -62,7 +66,7 @@ const PORT = 5000;
 // Connect to the database and start the server
 connectDb()
   .then(() => {
-    app.listen(PORT,"0.0.0.0", () => {
+    app.listen(PORT, "0.0.0.0", () => {
       console.log(`Server started successfully on port ${PORT}`); // Fixed typo
     });
   })
