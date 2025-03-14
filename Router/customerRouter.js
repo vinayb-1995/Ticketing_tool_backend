@@ -11,6 +11,9 @@ router.post('/customerlogin', customerController.login);
 //get customer data
 router.route("/customerdata").get(customerAuthMiddleware, customerController.customer);
 
+//get get tickets
+router.route("/cutomerAllTickets").get(customerAuthMiddleware, customerController.getcustomerAllTickets);
+
 //get customerDetails of customer
 // router.route("/:customerId").get(customerAuthMiddleware, customerController.getCustomerWithAdminDetails);
 // router.get('/:customerId', customerController.getCustomerWithAdminDetails);

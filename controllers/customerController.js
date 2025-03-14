@@ -1,5 +1,6 @@
 const Admin = require("../model/adminModel");
 const Customer = require("../model/customerModel");
+const Tickets = require("../model/ticketModel");
 
 /* Customer registration */
 const register = async (req, res) => {
@@ -133,4 +134,33 @@ const customer = async (req, res) => {
   }
 };
 
-module.exports = { register, login, customer };
+// Get Customer all  tickets
+const getcustomerAllTickets = async (req, res) => {
+  try {
+    // Retrieve the agent's unique ID from the request, possibly via JWT or middleware
+    const customerUniqueID = req.user?.user_unique_ID; // Adjust based on your JWT payload
+    if (!customerUniqueID) {
+      return res.status(400).json({ message: "Agent unique ID is missing" });
+    }
+    // Fetch tickets assigned to this agent
+    const tickets = await Tickets.find({
+      "customerID": customerUniqueID,
+    }).populate("adminAssigned.assignedTo", "fullname email department");
+
+    // Check if tickets exist
+    if (!tickets || tickets.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "No tickets found for this agent" });
+    }
+
+    // Return the tickets in the response
+    res.status(200).json(tickets);
+  } catch (err) {
+    console.error("Error fetching tickets:", err.message);
+    res
+      .status(500)
+      .json({ error: "Server error occurred while fetching tickets" });
+  }
+};
+module.exports = { register, login, customer,getcustomerAllTickets };

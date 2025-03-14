@@ -349,7 +349,7 @@ const getAllTickets = async (req, res) => {
     // Ensure adminId is provided, possibly from the authenticated request
     const adminId = req.adminId || req.user?.adminId; // Use req.user if using JWT or middleware
     if (!adminId) {
-      console.error("adminId not provided in request");
+      // console.error("adminId not provided in request");
       return res.status(400).json({ message: "adminId is missing" });
     }
     // Fetch tickets associated with the adminId
@@ -380,7 +380,7 @@ const getTicketById = async (req, res) => {
     const adminMailID = req.email || req.user?.email;
     // console.log("adminMailID>>", adminMailID);
     if (!adminId) {
-      console.error("adminId not provided in request");
+      // console.error("adminId not provided in request");
       return res.status(400).json({ message: "adminId is missing" });
     }
     // console.log("adminId>>", adminId);
