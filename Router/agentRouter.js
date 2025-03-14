@@ -3,13 +3,17 @@ const router = express.Router();
 const agnetController = require('../controllers/agentController'); // Update the path if necessary
 const agentAuthMiddleware=require('../authMiddleware/agentAuthMiddleware')
 
-// Customer registration route
+// agents registration route
 router.post('/agentregister', agnetController.register);
-//customer login
+//agents login
 router.post('/agentlogin', agnetController.login);
 
-//get customer data
+//get agents data
 router.route("/agentdata").get(agentAuthMiddleware, agnetController.agent);
+
+//get get agents ALL tickets
+router.route("/agentAllTickets").get(agentAuthMiddleware, agnetController.getAgentAllTickets);
+
 
 //get customerDetails of customer
 // router.route("/:customerId").get(customerAuthMiddleware, customerController.getCustomerWithAdminDetails);

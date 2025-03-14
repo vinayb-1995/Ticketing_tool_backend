@@ -51,7 +51,7 @@ app.use("/api/admin", adminRouter);
 app.use("/api/customer", customerRouter);
 
 // Use the customer router
-app.use("/api/agent", agentRouter);
+app.use("/api/agent", agentRouter); 
 
 // Use the ticket router
 app.use("/api/tickets", ticketRouter);
