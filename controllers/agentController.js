@@ -18,8 +18,8 @@ const register = async (req, res) => {
       password,
       phoneNumber,
       fullname,
-      agentAdminIT,
-      agentAdminSAP,
+      // agentAdminIT,
+      // agentAdminSAP,
     } = req.body;
 
     // console.log('Registering customer:', { firstname, lastname, email, createdByAdmin });
@@ -55,8 +55,8 @@ const register = async (req, res) => {
         username: admin.username,
         email: admin.email,
       },
-      agentAdminIT,
-      agentAdminSAP
+      // agentAdminIT,
+      // agentAdminSAP
     });
     // console.log("new customeer",newCustomer)
     return res.status(201).json({
