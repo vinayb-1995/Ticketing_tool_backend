@@ -86,6 +86,7 @@ const assignTickets = async (req, res) => {
     ticket.adminAssigned.endDateAdnTime = endDateAdnTime || '';  // Assign ticket to agent
     ticket.adminAssigned.adminDescription = adminDescription || '';  // Assign ticket to agent
     ticket.status = status 
+    // ticket.adminAssigned.status = status 
 
     // Save the updated ticket to the database
     await ticket.save();
