@@ -94,6 +94,35 @@ const customersCollection = async (req, res) => {
   }
 };
 
+// to get customer by ID:
+const customerByID = async (req, res) => {
+  try {
+    // Ensure req.adminId is defined for debugging
+    if (!req.adminId) {
+      console.error("adminId not provided in request");
+      return res.status(400).json({ message: "adminId is missing" });
+    }
+    const { id } = req.params; // Destructure `id` from `req.params`
+    if (!id) {
+      console.error("Agent ID not provided");
+      return res.status(404).json({ message: "Agent not found" });
+    }
+    const customer = await Customer.findOne({ user_unique_ID: id, createdByAdmin: req.adminId });
+    // console.log("agent>>",agent)
+    if (!customer) {
+      console.error("Customer not Found");
+      return res.status(404).json({ message: "Customer not Found" });
+    }
+    // console.log("Agent by ID:", agent);
+    return res.status(200).json(customer);
+  } catch (error) {
+    console.error("Error fetching Customer:", error);
+    if (!res.headersSent) {
+      return res.status(500).json({ message: "Server error", error: error.message });
+    }
+  }
+};
+
 //to send all agent data for agents collection filter by admin id
 const agentsCollection = async (req, res) => {
   try {
@@ -150,198 +179,198 @@ const agentByID = async (req, res) => {
 };
 
 // update agent by ID for IT:
-const updateAgentByIDIT = async (req, res) => {
-  try {
-    // Ensure req.adminId is defined for debugging
-    if (!req.adminId) {
-      console.error("adminId not provided in request");
-      return res.status(400).json({ message: "adminId is missing" });
-    }
+// const updateAgentByIDIT = async (req, res) => {
+//   try {
+//     // Ensure req.adminId is defined for debugging
+//     if (!req.adminId) {
+//       console.error("adminId not provided in request");
+//       return res.status(400).json({ message: "adminId is missing" });
+//     }
 
-    const { id } = req.params;
-    if (!id) {
-      console.error("Agent ID not provided");
-      return res.status(404).json({ message: "Agent not found" });
-    }
+//     const { id } = req.params;
+//     if (!id) {
+//       console.error("Agent ID not provided");
+//       return res.status(404).json({ message: "Agent not found" });
+//     }
 
-    // Fetch the agent document by user_unique_ID and createdByAdmin
-    const agent = await Agents.findOne({ user_unique_ID: id, createdByAdmin: req.adminId,department:"IT" });
-    // console.log(agent)
-    if (!agent) {
-      console.error("Agent not found");
-      return res.status(404).json({ message: "Agent not found" });
-    }
+//     // Fetch the agent document by user_unique_ID and createdByAdmin
+//     const agent = await Agents.findOne({ user_unique_ID: id, createdByAdmin: req.adminId,department:"IT" });
+//     // console.log(agent)
+//     if (!agent) {
+//       console.error("Agent not found");
+//       return res.status(404).json({ message: "Agent not found" });
+//     }
 
-    // Destructure fields from the request body (only agentAdminIT and agentAdminSAP)
-    const { agentAdminIT, agentAdminSAP } = req.body;
+//     // Destructure fields from the request body (only agentAdminIT and agentAdminSAP)
+//     // const { agentAdminIT, agentAdminSAP } = req.body;
 
-    // Set default values for fields that are not provided in the request
-    const updateFields = {};
+//     // Set default values for fields that are not provided in the request
+//     const updateFields = {};
 
-    // If 'agentAdminIT' is provided in the request body, update it; otherwise, keep it false (default)
-    updateFields.agentAdminIT = agentAdminIT !== undefined ? agentAdminIT : agent.agentAdminIT;
+//     // If 'agentAdminIT' is provided in the request body, update it; otherwise, keep it false (default)
+//     // updateFields.agentAdminIT = agentAdminIT !== undefined ? agentAdminIT : agent.agentAdminIT;
 
-    // If 'agentAdminSAP' is provided in the request body, update it; otherwise, keep it false (default)
-    updateFields.agentAdminSAP = false
+//     // If 'agentAdminSAP' is provided in the request body, update it; otherwise, keep it false (default)
+//     // updateFields.agentAdminSAP = false
 
-    // Perform the update
-    const updatedAgent = await Agents.updateOne(
-      { user_unique_ID: id, createdByAdmin: req.adminId },
-      { $set: updateFields }
-    );
+//     // Perform the update
+//     const updatedAgent = await Agents.updateOne(
+//       { user_unique_ID: id, createdByAdmin: req.adminId },
+//       { $set: updateFields }
+//     );
 
-    // If no fields were modified, return the current agent data (no change)
-    if (updatedAgent.nModified === 0) {
-      return res.status(200).json(agent);
-    }
+//     // If no fields were modified, return the current agent data (no change)
+//     if (updatedAgent.nModified === 0) {
+//       return res.status(200).json(agent);
+//     }
 
-    // Fetch the updated agent data and return it
-    const updatedAgentDetails = await Agents.findOne({ user_unique_ID: id, createdByAdmin: req.adminId });
-    return res.status(200).json(updatedAgentDetails);
+//     // Fetch the updated agent data and return it
+//     const updatedAgentDetails = await Agents.findOne({ user_unique_ID: id, createdByAdmin: req.adminId });
+//     return res.status(200).json(updatedAgentDetails);
 
-  } catch (error) {
-    console.error("Error updating Agent:", error);
-    return res.status(500).json({ message: "Server error", error: error.message });
-  }
-};
+//   } catch (error) {
+//     console.error("Error updating Agent:", error);
+//     return res.status(500).json({ message: "Server error", error: error.message });
+//   }
+// };
 
 // update agent by ID for SAP:
-const updateAgentByIDSAP = async (req, res) => {
-  try {
-    // Ensure req.adminId is defined for debugging
-    if (!req.adminId) {
-      console.error("adminId not provided in request");
-      return res.status(400).json({ message: "adminId is missing" });
-    }
+// const updateAgentByIDSAP = async (req, res) => {
+//   try {
+//     // Ensure req.adminId is defined for debugging
+//     if (!req.adminId) {
+//       console.error("adminId not provided in request");
+//       return res.status(400).json({ message: "adminId is missing" });
+//     }
 
-    const { id } = req.params;
-    if (!id) {
-      console.error("Agent ID not provided");
-      return res.status(404).json({ message: "Agent not found" });
-    }
+//     const { id } = req.params;
+//     if (!id) {
+//       console.error("Agent ID not provided");
+//       return res.status(404).json({ message: "Agent not found" });
+//     }
 
-    // Fetch the agent document by user_unique_ID and createdByAdmin
-    const agent = await Agents.findOne({ user_unique_ID: id, createdByAdmin: req.adminId,department:"SAP" });
-    // console.log(agent)
-    if (!agent) {
-      console.error("Agent not found");
-      return res.status(404).json({ message: "Agent not found" });
-    }
+//     // Fetch the agent document by user_unique_ID and createdByAdmin
+//     const agent = await Agents.findOne({ user_unique_ID: id, createdByAdmin: req.adminId,department:"SAP" });
+//     // console.log(agent)
+//     if (!agent) {
+//       console.error("Agent not found");
+//       return res.status(404).json({ message: "Agent not found" });
+//     }
 
-    // Destructure fields from the request body (only agentAdminIT and agentAdminSAP)
-    const { agentAdminIT, agentAdminSAP } = req.body;
+//     // Destructure fields from the request body (only agentAdminIT and agentAdminSAP)
+//     const { agentAdminIT, agentAdminSAP } = req.body;
 
-    // Set default values for fields that are not provided in the request
-    const updateFields = {};
+//     // Set default values for fields that are not provided in the request
+//     const updateFields = {};
 
-    // If 'agentAdminIT' is provided in the request body, update it; otherwise, keep it false (default)
-    updateFields.agentAdminIT = false;
+//     // If 'agentAdminIT' is provided in the request body, update it; otherwise, keep it false (default)
+//     updateFields.agentAdminIT = false;
 
-    // If 'agentAdminSAP' is provided in the request body, update it; otherwise, keep it false (default)
-    updateFields.agentAdminSAP = agentAdminSAP !== undefined ? agentAdminSAP :agent.agentAdminSAP;
+//     // If 'agentAdminSAP' is provided in the request body, update it; otherwise, keep it false (default)
+//     updateFields.agentAdminSAP = agentAdminSAP !== undefined ? agentAdminSAP :agent.agentAdminSAP;
 
-    // Perform the update
-    const updatedAgent = await Agents.updateOne(
-      { user_unique_ID: id, createdByAdmin: req.adminId },
-      { $set: updateFields }
-    );
+//     // Perform the update
+//     const updatedAgent = await Agents.updateOne(
+//       { user_unique_ID: id, createdByAdmin: req.adminId },
+//       { $set: updateFields }
+//     );
 
-    // If no fields were modified, return the current agent data (no change)
-    if (updatedAgent.nModified === 0) {
-      return res.status(200).json(agent);
-    }
+//     // If no fields were modified, return the current agent data (no change)
+//     if (updatedAgent.nModified === 0) {
+//       return res.status(200).json(agent);
+//     }
 
-    // Fetch the updated agent data and return it
-    const updatedAgentDetails = await Agents.findOne({ user_unique_ID: id, createdByAdmin: req.adminId });
-    return res.status(200).json(updatedAgentDetails);
+//     // Fetch the updated agent data and return it
+//     const updatedAgentDetails = await Agents.findOne({ user_unique_ID: id, createdByAdmin: req.adminId });
+//     return res.status(200).json(updatedAgentDetails);
 
-  } catch (error) {
-    console.error("Error updating Agent:", error);
-    return res.status(500).json({ message: "Server error", error: error.message });
-  }
-};
-
-// update agent admin by ID for IT agentAdminIT: false:
-const updateAgentAdminByIdIT = async (req, res) => {
-  try {
-    // Ensure req.adminId is defined for debugging
-    if (!req.adminId) {
-      console.error("adminId not provided in request");
-      return res.status(400).json({ message: "adminId is missing" });
-    }
-
-    // Retrieve agents with agentAdminIT true created by this admin
-    const allAgents = await Agents.find({ createdByAdmin: req.adminId, agentAdminIT: true });
-    // console.log("allAgents>>", allAgents);
-
-    if (!allAgents || allAgents.length === 0) {
-      return res.status(404).json({ message: "No Agents found" });
-    }
-
-    // Update `agentAdminIT` field only if specified as false in req.body
-    const updatedAgents = [];
-    for (const agent of allAgents) {
-      if (req.body.agentAdminIT === false) {
-        agent.agentAdminIT = false;
-        await agent.save();
-        updatedAgents.push(agent);
-      }
-    }
-
-    // Return updated agents if any were modified
-    if (updatedAgents.length > 0) {
-      return res.status(200).json(updatedAgents);
-    } else {
-      return res.status(200).json({ message: "No changes made to agentAdminIT status" });
-    }
-  } catch (error) {
-    console.error("Error updating Agents:", error);
-    if (!res.headersSent) {
-      return res.status(500).json({ message: "Server error", error: error.message });
-    }
-  }
-};
+//   } catch (error) {
+//     console.error("Error updating Agent:", error);
+//     return res.status(500).json({ message: "Server error", error: error.message });
+//   }
+// };
 
 // update agent admin by ID for IT agentAdminIT: false:
-const updateAgentAdminByIdSap = async (req, res) => {
-  try {
-    // Ensure req.adminId is defined for debugging
-    if (!req.adminId) {
-      console.error("adminId not provided in request");
-      return res.status(400).json({ message: "adminId is missing" });
-    }
+// const updateAgentAdminByIdIT = async (req, res) => {
+//   try {
+//     // Ensure req.adminId is defined for debugging
+//     if (!req.adminId) {
+//       console.error("adminId not provided in request");
+//       return res.status(400).json({ message: "adminId is missing" });
+//     }
 
-    // Retrieve agents with agentAdminIT true created by this admin
-    const allAgents = await Agents.find({ createdByAdmin: req.adminId, agentAdminSAP: true });
-    // console.log("allAgents>>", allAgents);
+//     // Retrieve agents with agentAdminIT true created by this admin
+//     const allAgents = await Agents.find({ createdByAdmin: req.adminId, agentAdminIT: true });
+//     // console.log("allAgents>>", allAgents);
 
-    if (!allAgents || allAgents.length === 0) {
-      return res.status(404).json({ message: "No Agents found" });
-    }
+//     if (!allAgents || allAgents.length === 0) {
+//       return res.status(404).json({ message: "No Agents found" });
+//     }
 
-    // Update `agentAdminIT` field only if specified as false in req.body
-    const updatedAgents = [];
-    for (const agent of allAgents) {
-      if (req.body.agentAdminSAP === false) {
-        agent.agentAdminSAP = false;
-        await agent.save();
-        updatedAgents.push(agent);
-      }
-    }
-// console.log("updatedAgents>>",updatedAgents)
-    // Return updated agents if any were modified
-    if (updatedAgents.length > 0) {
-      return res.status(200).json(updatedAgents);
-    } else {
-      return res.status(200).json({ message: "No changes made to agentAdminIT status" });
-    }
-  } catch (error) {
-    console.error("Error updating Agents:", error);
-    if (!res.headersSent) {
-      return res.status(500).json({ message: "Server error", error: error.message });
-    }
-  }
-};
+//     // Update `agentAdminIT` field only if specified as false in req.body
+//     const updatedAgents = [];
+//     for (const agent of allAgents) {
+//       if (req.body.agentAdminIT === false) {
+//         agent.agentAdminIT = false;
+//         await agent.save();
+//         updatedAgents.push(agent);
+//       }
+//     }
+
+//     // Return updated agents if any were modified
+//     if (updatedAgents.length > 0) {
+//       return res.status(200).json(updatedAgents);
+//     } else {
+//       return res.status(200).json({ message: "No changes made to agentAdminIT status" });
+//     }
+//   } catch (error) {
+//     console.error("Error updating Agents:", error);
+//     if (!res.headersSent) {
+//       return res.status(500).json({ message: "Server error", error: error.message });
+//     }
+//   }
+// };
+
+// update agent admin by ID for IT agentAdminIT: false:
+// const updateAgentAdminByIdSap = async (req, res) => {
+//   try {
+//     // Ensure req.adminId is defined for debugging
+//     if (!req.adminId) {
+//       console.error("adminId not provided in request");
+//       return res.status(400).json({ message: "adminId is missing" });
+//     }
+
+//     // Retrieve agents with agentAdminIT true created by this admin
+//     const allAgents = await Agents.find({ createdByAdmin: req.adminId, agentAdminSAP: true });
+//     // console.log("allAgents>>", allAgents);
+
+//     if (!allAgents || allAgents.length === 0) {
+//       return res.status(404).json({ message: "No Agents found" });
+//     }
+
+//     // Update `agentAdminIT` field only if specified as false in req.body
+//     const updatedAgents = [];
+//     for (const agent of allAgents) {
+//       if (req.body.agentAdminSAP === false) {
+//         agent.agentAdminSAP = false;
+//         await agent.save();
+//         updatedAgents.push(agent);
+//       }
+//     }
+// // console.log("updatedAgents>>",updatedAgents)
+//     // Return updated agents if any were modified
+//     if (updatedAgents.length > 0) {
+//       return res.status(200).json(updatedAgents);
+//     } else {
+//       return res.status(200).json({ message: "No changes made to agentAdminIT status" });
+//     }
+//   } catch (error) {
+//     console.error("Error updating Agents:", error);
+//     if (!res.headersSent) {
+//       return res.status(500).json({ message: "Server error", error: error.message });
+//     }
+//   }
+// };
 
 // Get all tickets
 const getAllTickets = async (req, res) => {
@@ -419,13 +448,17 @@ module.exports = {
   register,
   login,
   admin,
+
   customersCollection,
+  customerByID,
+
   agentsCollection,
   agentByID,
+  
   getAllTickets,
   getTicketById,
-  updateAgentByIDIT,
-  updateAgentByIDSAP,
-  updateAgentAdminByIdIT,
-  updateAgentAdminByIdSap,
+  // updateAgentByIDIT,
+  // updateAgentByIDSAP,
+  // updateAgentAdminByIdIT,
+  // updateAgentAdminByIdSap,
 };

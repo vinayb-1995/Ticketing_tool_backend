@@ -17,18 +17,20 @@ router.route("/admindata").get(authMiddleware, adminController.admin);
 
 //get customer data
 router.route("/allcustomersdata").get(authMiddleware, adminController.customersCollection);
+router.route("/customer/:id").get(authMiddleware, adminController.customerByID);
 
+//get agent data
 router.route("/allagentsdata").get(authMiddleware, adminController.agentsCollection);
 router.route("/agent/:id").get(authMiddleware, adminController.agentByID);
 
 //two update agets it
-router.route("/updateAgentByIdIt/:id").put(authMiddleware, adminController.updateAgentByIDIT);
-//two update agent sap
-router.route("/updateAgentByIdSap/:id").put(authMiddleware, adminController.updateAgentByIDSAP);
+// router.route("/updateAgentByIdIt/:id").put(authMiddleware, adminController.updateAgentByIDIT);
+// //two update agent sap
+// router.route("/updateAgentByIdSap/:id").put(authMiddleware, adminController.updateAgentByIDSAP);
 
 //to update agentAdmin IT 
-router.route("/updateAdminAgentByIdIt").patch(authMiddleware, adminController.updateAgentAdminByIdIT);
-router.route("/updateAdminAgentByIdSap").patch(authMiddleware, adminController.updateAgentAdminByIdSap);
+// router.route("/updateAdminAgentByIdIt").patch(authMiddleware, adminController.updateAgentAdminByIdIT);
+// router.route("/updateAdminAgentByIdSap").patch(authMiddleware, adminController.updateAgentAdminByIdSap);
 
 //to update agentAdmin sap  
 

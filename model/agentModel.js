@@ -47,14 +47,14 @@ const agentSchema = new mongoose.Schema({
     type: String,
     default: "agent",
   },
-  agentAdminIT: {
-    type: Boolean,
-    default: false,
-  },
-  agentAdminSAP: {
-    type: Boolean,
-    default: false,
-  },
+  // agentAdminIT: {
+  //   type: Boolean,
+  //   default: false,
+  // },
+  // agentAdminSAP: {
+  //   type: Boolean,
+  //   default: false,
+  // },
   adminDetails: {
     // Add this field to the schema
     _id: { type: mongoose.Schema.Types.ObjectId },
